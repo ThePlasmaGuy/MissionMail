@@ -1,0 +1,33 @@
+/* Main .css for MissionMail Render Process*/
+
+/* Base Styles */
+body {
+    width: 100%;
+    padding:0;
+    margin: 0;
+    background-color: rgba(0,0,0,0);
+}
+
+p {
+    color: rgba(255,255,255,1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Container Styling */
+
+#container {
+    width: 100vw;
+    height: calc(100vh - 25px);
+    padding:0;
+    margin:0;
+    position:fixed;
+    top:25px;
+    left:0;
+    z-index:1;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: rgba(255,255,255,1);
+}

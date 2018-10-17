@@ -1,0 +1,4 @@
+Add:
+* Icon.icns
+* Icon.ico
+* Icon.png

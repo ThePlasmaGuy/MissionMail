@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>MissionMail</title>
+
+        <!-- Stylesheets -->
+        <link rel="stylesheet" href="assets/css/fonts.css" type="text/css">
+        <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="assets/css/main.css" type="text/css">
+        <link rel="stylesheet" href="assets/css/menubar.css" type="text/css">
+    
+        <!-- Electron Fixes (Overwrite Node Defaults) -->
+        <script>
+            window.node_require = require;
+
+            var electron = require('electron');
+            var remote = electron.remote;
+            var settings = remote.getGlobal('settings');
+            var current_window = electron.remote.getCurrentWindow();
+
+            delete window.require;
+            delete window.exports;
+            delete window.module;
+        </script>
+    </head>
+    <body>
+        <!-- App Menu Items -->
+        <div id="menu-bar"></div>
+        <div id="menu-buttons">
+            <div id="menu-close"><i class="fa fa-times"></i></div>
+            <div id="menu-minimize"><i class="fa fa-window-minimize"></i></div>
+            <div id="menu-settings"><i class="fa fa-cog"></i></div>
+            <div id="menu-title">MissionMail</div>
+        </div>
+
+        <div id="container"></div>
+
+        <!-- Scripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/menubar.js"></script>
+    </body>
+</html>
