@@ -93,7 +93,6 @@ function pullMissionaries(auth) {
             missionaries[nameKey] = missionary;
           }
           global.missionaries = missionaries;
-          console.log('mup')
           resolve();
         }
       }
@@ -153,7 +152,6 @@ function pullCompanionships(auth) {
           }
           global.companionships = companionships;
           global.zoneLeaders = zoneLeaders;
-          console.log(JSON.stringify(global.zoneLeaders));
           resolve();
         }
       }
