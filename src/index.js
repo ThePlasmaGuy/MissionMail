@@ -54,56 +54,131 @@ const createMainWindow = () => {
 };
 
 
-// Pull Missionary Data to global.data
-function pullData(auth) {
-  const missionaries = {}
-  const sheets = google.sheets({version:'v4',auth:auth});
-  sheets.spreadsheets.values.get({
-      spreadsheetId: '1fDM_KEVDL-10EaAFwHdxFaRJ8a9dgjiWBlflLjZE7ek',
-      range: 'IMOS!B3:U'
-    },
-    (err, res) => {
-      if (err) {
-        console.error('The API returned an error.');
-        throw err;
-      }
-      const rows = res.data.values;
-      if (rows.length === 0) {
-        console.log('No data found.');
-      } else {
-        for (const row of rows) {
-          // Print columns A and E, which correspond to indices 0 and 4.
-          const missionary = {
-            name: {
-              first: row[1],
-              last: row[0]
-            },
-            phone: row[11],
-            email_personal: row[13],
-            email_area: row[19]
+// Pull Missionary Data to global.missionaries
+function pullMissionaries(auth) {
+  return new Promise((resolve, reject) => {
+    const missionaries = {}
+    const sheets = google.sheets({version:'v4',auth:auth});
+    sheets.spreadsheets.values.get({
+        spreadsheetId: '1NkbA7dDG438urIS5ve9k3jmRgbBpou2YYHYp8RX5om0',
+        range: 'DATA!A2:AA'
+      },
+      (err, res) => {
+        if (err) {
+          reject(Error('The API returned an error.'));
+          throw err;
+        }
+        const rows = res.data.values;
+        if (rows.length === 0) {
+          reject(Error('No data found.'));
+        } else {
+          for (const row of rows) {
+            var missionary = {
+              name: {
+                first: row[2],
+                last: row[1]
+              },
+              phone: [row[8]],
+              email_personal: row[14],
+              email_area: row[24],
+              zone: row[21],
+              area: row[23]
+            }
+            for (var i=9; i<14; i++) {
+              if (row[i] != '') {
+                missionary.phone.push(row[i]);
+              }
+            }
+            const nameKey = row[1] + row[2]
+            missionaries[nameKey] = missionary;
           }
-          missionaries[row[0] + row[1]] = missionary;
+          global.missionaries = missionaries;
+          console.log('mup')
+          resolve();
         }
       }
-    }
-  );
-  global.missionaries = missionaries;
+    );
+  });
 }
 
+// Pull Companionship Data to global.companionships
+function pullCompanionships(auth) {
+  return new Promise((resolve, reject) => {
+    const companionships = {}
+    const zoneLeaders = {}
+    const sheets = google.sheets({version:'v4',auth:auth});
+    sheets.spreadsheets.values.get({
+        spreadsheetId: '1NkbA7dDG438urIS5ve9k3jmRgbBpou2YYHYp8RX5om0',
+        range: 'CONTACTS!A1:AA'
+      },
+      (err, res) => {
+        if (err) {
+          reject(Error('The API returned an Error'));
+        }
+        const rows = res.data.values;
+        if (rows.length === 0) {
+          reject(Error('No Data Found'));
+        } else {
+          for (const row of rows) {
+            var companionship = {
+              senior: row[0],
+              junior: [row[9]],
+              companions: [row[0], row[9]],
+              leadership: (row[2] == '') ? 'SC' : row[2],
+              zone: row[14],
+              phone: [row[3]],
+              email: row[16],
+              address: row[17] + ' - ' + row[18]
+            }
+            for (var i=4; i<9; i++) {
+              if (row[i] != '') {
+                companionship.phone.push(row[i]);
+              }
+            }
+            for (var i=10; i<14; i++) {
+              if (row[i] != '') {
+                companionship.junior.push(row[i]);
+                companionship.companions.push(row[i]);
+              }
+            }
+  
+            // Object Keys
+            const areaKey = row[15].replace(/\s+/g, '');
+            const zoneKey = row[14].replace(/\s+/g, ''); 
+
+            companionships[areaKey] = companionship; // Key = Area Name w/o spaces
+            if (row[2] == 'ZL' || row[2] == 'ZT') {
+              zoneLeaders[zoneKey] = companionship; // Key = Zone Name w/o spaces
+            }
+          }
+          global.companionships = companionships;
+          global.zoneLeaders = zoneLeaders;
+          console.log(JSON.stringify(global.zoneLeaders));
+          resolve();
+        }
+      }
+    );
+  });
+}
 
 // Initialization Finished
-app.on('ready', () => { 
+app.on('ready', async () => { 
   Menu.setApplicationMenu(MenuInfo);
 
-  if (!mainWindow)
-    createMainWindow();
-
-  GoogleAuth.auth(pullData);
+  GoogleAuth.auth([pullMissionaries, pullCompanionships], () => {
+    app.emit('authorized');
+  });
 
   // Set global variables to allow use of Google API by render process
-  global.authorize = GoogleAuth.auth;
+  global.auth = GoogleAuth.auth;
   global.google = google;
+});
 
+// Authorization Complete
+app.on('authorized', () => {
+  if (!mainWindow)
+    createMainWindow();
+  
   mainWindow.show();
 });
 

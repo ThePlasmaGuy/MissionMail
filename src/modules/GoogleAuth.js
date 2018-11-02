@@ -9,7 +9,7 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 const CREDENTIALS_FOLDER = '../google';
 
 // Authorize Google & Call Specified Function with Authorized Client
-exports.auth = (callback) => {
+exports.auth = (callback, final = null) => {
   fs.readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'credentials.json'), (err, content) => {
     if (err) return console.log('ERROR loading client secret file:', err);
 
@@ -40,7 +40,7 @@ exports.auth = (callback) => {
             res.send('Authentication Successful!  Closing Window...');
             authWindow.destroy();
             listener.close(); // close listener
-            callback(client); // call specified function
+            runCallbackFunctions(callback, final, client); // call specified function(s)
           });
         });
         const listener = callback_server.listen(2403); // Listen for redirect query
@@ -50,8 +50,24 @@ exports.auth = (callback) => {
         authWindow.loadURL(auth_URL);
       } else { // refresh token previously saved
         client.setCredentials({refresh_token: token}); // set refresh token
-        callback(client); // call specified function
+        runCallbackFunctions(callback, final, client); // call specified function(S)
       }
     });
   });
+}
+
+async function runCallbackFunctions(callbackFunctions, final, authClient) {
+  if (typeof callbackFunctions == 'function') {
+    await callbackFunctions(authClient) // Run single callback Function
+  } else if (typeof callbackFunctions == 'object') {
+    if (callbackFunctions.length > 0) {
+      for (const callback of callbackFunctions) {
+        if (typeof callback == 'function') {
+          await callback(authClient); // Run callback function in Array
+        } else throw TypeError('One or more callback functions is not a function');
+      }
+    } else throw TypeError("Callback is not a Function or Array of Functions");
+  } else throw TypeError("Callback is not a Function or Array of Functions");
+
+  if (final) { final(); }
 }
