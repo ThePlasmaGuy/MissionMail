@@ -7,8 +7,10 @@
         <!-- Stylesheets -->
         <link rel="stylesheet" href="assets/css/fonts.css" type="text/css">
         <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="assets/css/tooltips.css" type="text/css">
         <link rel="stylesheet" href="assets/css/main.css" type="text/css">
         <link rel="stylesheet" href="assets/css/menubar.css" type="text/css">
+        <link rel="stylesheet" href="assets/css/panels.css" type="text/css">
     
         <!-- Electron Fixes (Overwrite Node Defaults) -->
         <script>
@@ -28,17 +30,34 @@
         <!-- App Menu Items -->
         <div id="menu-bar"></div>
         <div id="menu-buttons">
-            <div id="menu-close"><i class="fa fa-times"></i></div>
-            <div id="menu-minimize"><i class="fa fa-window-minimize"></i></div>
-            <div id="menu-settings"><i class="fa fa-cog"></i></div>
-            <div id="menu-title">MissionMail</div>
+            <div id="menu-close" class="tooltipped tooltipped-sw" aria-label="Close Window"><i class="fa fa-times"></i></div>
+            <div id="menu-minimize" class="tooltipped tooltipped-sw" aria-label="Minimize Window"><i class="fa fa-window-minimize"></i></div>
+            <div id="menu-reload" class="tooltipped tooltipped-sw" aria-label="Reload Application"><i class="fa fa-refresh"></i></div>
+            <div id="menu-settings" class="tooltipped tooltipped-sw" aria-label="Check Under the Hood"><i class="fa fa-cog"></i></div>
+            <div id="menu-title" class='p-switch' target='startup'>MissionMail</div>
         </div>
 
-        <div id="container"></div>
+        <div id="container">
+            <div id='startup' class='active'>
+                <div id='selection'>
+                    <div class='select-button p-switch' target='mail-notify'>Mail Notifications</div>
+                    <div class='select-button p-switch' target='send-mail'>Send Group Mail</div>
+                </div>
+            </div>
+            <div id='mail-notify'>
+                <div class='title-status'>&gt; Mail Notifications</div>
+            </div>
+            <div id='send-mail'>
+                <div class='title-status'>&gt; Send Group Mail</div>
+                <input class='missionary-names'/>
+            </div>
+        </div>
 
         <!-- Scripts -->
         <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/jquery-ui.min.js"></script>
         <script src="assets/js/menubar.js"></script>
         <script src="assets/js/main.js"></script>
+        <script src="assets/js/panels.js"></script>
     </body>
 </html>

@@ -20,7 +20,7 @@ let isQuitting = false; // Quit Information Container
 
 // Create Main Render Process
 const createMainWindow = () => {
-  const lastState = Storage.get("mainWindowState") || {width: 900, height: 675}; // Retrieve last state of Window for recreation
+  const lastState = Storage.get("mainWindowState") || {width: 600, height: 450}; // Retrieve last state of Window for recreation
 
   mainWindow = new BrowserWindow({ // Create Render Process (Window)
     width: lastState.width,
@@ -32,13 +32,12 @@ const createMainWindow = () => {
     show: false,
     autoHideMenuBar: true,
     frame: false,
-    transparent: true
+    transparent: true,
+    backgroundColor: '#00000000'
   });
 
   // Load Window HTML file
   mainWindow.loadURL(`file://${__dirname}/index.html`);
-
-  mainWindow.webContents.openDevTools();
 
   // Handle Window Closing
   mainWindow.on('close', event => {
@@ -57,7 +56,7 @@ const createMainWindow = () => {
 // Pull Missionary Data to global.missionaries
 function pullMissionaries(auth) {
   return new Promise((resolve, reject) => {
-    const missionaries = {}
+    global.missionaries = {}
     const sheets = google.sheets({version:'v4',auth:auth});
     sheets.spreadsheets.values.get({
         spreadsheetId: '1NkbA7dDG438urIS5ve9k3jmRgbBpou2YYHYp8RX5om0',
@@ -90,9 +89,8 @@ function pullMissionaries(auth) {
               }
             }
             const nameKey = row[1] + row[2]
-            missionaries[nameKey] = missionary;
+            global.missionaries[nameKey] = missionary;
           }
-          global.missionaries = missionaries;
           resolve();
         }
       }
@@ -103,8 +101,8 @@ function pullMissionaries(auth) {
 // Pull Companionship Data to global.companionships
 function pullCompanionships(auth) {
   return new Promise((resolve, reject) => {
-    const companionships = {}
-    const zoneLeaders = {}
+    global.companionships = {}
+    global.zoneLeaders = {}
     const sheets = google.sheets({version:'v4',auth:auth});
     sheets.spreadsheets.values.get({
         spreadsheetId: '1NkbA7dDG438urIS5ve9k3jmRgbBpou2YYHYp8RX5om0',
@@ -145,13 +143,11 @@ function pullCompanionships(auth) {
             const areaKey = row[15].replace(/\s+/g, '');
             const zoneKey = row[14].replace(/\s+/g, ''); 
 
-            companionships[areaKey] = companionship; // Key = Area Name w/o spaces
+            global.companionships[areaKey] = companionship; // Key = Area Name w/o spaces
             if (row[2] == 'ZL' || row[2] == 'ZT') {
-              zoneLeaders[zoneKey] = companionship; // Key = Zone Name w/o spaces
+              global.zoneLeaders[zoneKey] = companionship; // Key = Zone Name w/o spaces
             }
           }
-          global.companionships = companionships;
-          global.zoneLeaders = zoneLeaders;
           resolve();
         }
       }
