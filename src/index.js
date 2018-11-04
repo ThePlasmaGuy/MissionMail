@@ -33,7 +33,8 @@ const createMainWindow = () => {
     autoHideMenuBar: true,
     frame: false,
     transparent: true,
-    backgroundColor: '#00000000'
+    backgroundColor: '#00000000',
+    icon: path.join(__dirname, 'assets/icons/Logo.png')
   });
 
   // Load Window HTML file

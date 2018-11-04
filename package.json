@@ -21,6 +21,7 @@
           "squirrel"
         ],
         "darwin": [
+          "dmg",
           "zip"
         ],
         "linux": [
@@ -29,12 +30,23 @@
         ]
       },
       "electronPackagerConfig": {
-        "packageManager": "npm"
+        "packageManager": "npm",
+        "icon": "src/assets/icon/Logo.ico"
       },
       "electronWinstallerConfig": {
-        "name": "missionmail"
+        "name": "missionmail",
+        "setupIcon": "src/assets/icon/Logo.ico"
       },
-      "electronInstallerDebian": {},
+      "electronInstallerDMG": {
+        "name": "missionmail",
+        "icon": "src/assets/icon/Logo.icns"
+      },
+      "electronInstallerDebian": {
+        "icon": "src/assets/icon/Logo.png"
+      },
+      "electronInstallerFlatpack": {
+        "icon": "src/assets/icon/Logo.png"
+      },
       "electronInstallerRedhat": {},
       "github_repository": {
         "owner": "ThePlasmaGuy",
