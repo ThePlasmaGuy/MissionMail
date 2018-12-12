@@ -1,0 +1,903 @@
+/* Main .css for MissionMail Render Process*/
+
+/* Table of Contents:
+ * Base Page Styles
+ * Disable Selection (highlighting)
+ * Menubar Styles
+ * Sidebar Styles
+ * Branding Styles
+ * Navigation Styles
+ * Help Styles
+ * Body Styles
+ * Reusable Pane Styles
+ * Reusable Logo Styles
+ * Startup Pane Styles
+ * mailAlerts Styles
+ * requestHelp Styles
+ */
+
+/* Base Page Styles */
+body {
+    width: 100%;
+    padding:0;
+    margin: 0;
+    background-color: rgba(0,0,0,0);
+    color: rgba(32, 37, 41, 1);
+    font-family: 'Raleway';
+    overflow: hidden;
+}
+
+body > div {
+    position: fixed;
+    z-index: 1;
+}
+
+p {
+    color: rgba(32, 37, 41, 1);
+    font-family: 'Raleway';
+}
+
+input, select, textarea {
+    height: 25px;
+    padding: 2px;
+    background-color: rgba(32, 37, 41, 1);
+    color: rgba(161,180,196,1);
+    font-family: 'Raleway';
+    border: 2px solid rgba(32, 37, 41, 1);
+    border-radius: 2px;
+    transition: border 300ms ease-in-out;
+}
+
+input::placeholder, textarea::placeholder {
+    color: rgba(161,180,196,0.6);
+}
+
+input:focus {
+    border-color: rgba(71,230,214,1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    background-color: rgba(209,218,226,1);
+}
+
+textarea::-webkit-scrollbar {
+    background-color: rgba(32, 37, 41, 1);
+}
+
+::-webkit-scrollbar {
+    width:13px;
+    height:13px;
+}
+
+::-webkit-scrollbar-button {
+    display:none;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #9b9d9e;
+    border-radius: 3ex;
+    border: 3px solid rgba(209,218,226,1);
+    width:50%;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(32, 37, 41, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #828586;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: rgba(32, 37, 41, 1);
+}
+
+/* Disable Selection (highlighting) */
+:not(input):not(textarea),
+:not(input):not(textarea)::after,
+:not(input):not(textarea)::before {
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+input, button, textarea, :focus {
+    outline: none;
+}
+
+/* Menubar Styles */
+#menubar {
+    top: 0;
+    right: 0;
+    height: 28px;
+    width: calc(100vw - 150px);
+    z-index:10;
+    -webkit-app-region: drag;
+    border-top-right-radius: 5px;
+    background-color: rgba(32, 37, 41, 1);
+}
+
+.macOS #menubar {
+    left: 0;
+    width: 100vw;
+    border-top-left-radius: 5px;
+}
+
+.menubar-button {
+    float: right;
+    height: 100%;
+    width: 50px;
+    text-align: center;
+    -webkit-app-region: no-drag;
+}
+
+.menubar-button:hover {
+    background-color: rgba(50,56,61,1);
+}
+
+.menubar-button svg {
+    height: 20px;
+    width: 20px;
+    fill: rgba(161,180,196,1);
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+#window-sizeState svg {
+    height: 17px;
+    width: 17px;
+    margin-top: 5.5px;
+    margin-bottom: 5.5px;
+}
+
+#window-close:hover {
+    background-color: rgba(230,0,0,1);
+    border-top-right-radius: 5px;
+}
+
+#window-close:hover svg {
+    fill: rgba(255,255,255,1);
+}
+
+#window-close.disabled:hover {
+    background-color: rgba(50,56,61,1);
+}
+
+#window-close.disabled:hover svg {
+    fill: rgba(161,180,196,1);
+}
+
+/* Sidebar Styles */
+#sidebar {
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 148px;
+    z-index: 5;
+    padding: 0;
+    color: rgba(161,180,196,1);
+}
+
+.macOS #sidebar {
+    top: 30px;
+}
+
+#sidebar > div {
+    z-index: 6;
+    left: 0;
+    width: 100%;
+    background-color: rgba(32, 37, 41, 1);
+}
+
+#branding {
+    position: absolute;
+    top: 0;
+    height: 113px;
+    border-top-left-radius: 5px;
+    -webkit-app-region: drag;
+}
+
+#navigation {
+    position: absolute;
+    bottom: 30px;
+    height: calc(100vh - 115px - 30px);
+    padding-top: 5px;
+}
+
+#help {
+    position: absolute;
+    bottom: 0;
+    height: 28px;
+    border-bottom-left-radius: 5px;
+}
+
+/* Branding Styles */
+#branding-logo {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+}
+
+#branding-logo svg{
+    fill: rgba(161,180,196,1);
+    height: 67.75px;
+    width: 121.85px;
+}
+
+#branding-text {
+    position: absolute;
+    bottom: 10px;
+    left:0;
+    width: 100%;
+    text-align: center;
+    font-family: 'Raleway';
+    letter-spacing: 4px;
+    font-size: 0.8em;
+}
+
+/* Navigation Styles */
+#navigation > .navigation-button {
+    position: relative;
+    height: 50px;
+    cursor: pointer;
+}
+
+#navigation > .navigation-button:hover {
+    background-color: rgba(50,56,61,1);
+}
+
+#navigation > .navigation-button.active {
+    background-color: rgba(50,56,61,1);
+    border-style: solid;
+    border-width: 1px 0;
+    border-color: rgba(76,85,92,1);
+}
+
+.nav-icon {
+    position: absolute;
+    top:0;
+    left: 20px;
+    height:100%;
+    cursor: pointer;
+}
+
+.nav-icon svg {
+    position: relative;
+    fill: rgba(161,180,196,1);
+    height: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.nav-text {
+    position: relative;
+    top: 50%;
+    width: fit-content;
+    transform: translateY(-50%);
+    padding-left: 80px;
+    font-family: 'Raleway';
+    cursor: pointer;
+}
+
+/* Help Styles */
+#help > div {
+    position: absolute;
+    z-index: 3;
+    bottom: 3px;
+    height: 22px;
+    width: 22px;
+}
+
+#help > div > svg {
+    fill: rgba(161,180,196,1);
+    height: 22px;
+    width: 22px;
+}
+
+#help-request {
+    left: 6px;
+    cursor: help;
+}
+
+#help-request path, #help-request svg {
+    cursor: help;
+}
+
+#help-request > #filled {
+    display: none;
+}
+
+#help-request.active > #filled {
+    display: block;
+}
+
+#help-request.active > #hollow {
+    display: none;
+}
+
+#help-reload {
+    right: 31px;
+}
+
+#help-dev {
+    right: 6px;
+}
+
+/* Body Styles */
+#content {
+    bottom: 0;
+    right: 0;
+    width: calc(100vw - 150px);
+    height: calc(100vh - 30px);
+}
+
+.contentPane {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.contentPane.active {
+    display: block;
+}
+
+.contentPane > .body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(209,218,226,1);
+    border-bottom-right-radius: 5px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.contentPane > .options {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: none;
+    height: 58px;
+    width: 100%;
+    background-color: rgba(32, 37, 41, 1);
+    border-bottom-right-radius: 5px;
+}
+
+.contentPane.optionsEnabled > .body {
+    height: calc(100% - 60px);
+    border-bottom-right-radius: 0;
+}
+
+.contentPane.optionsEnabled > .options {
+    display: block;
+}
+
+/* Reusable Pane Styles */
+.pane-title {
+    font-size: 1.25em;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.options-select {
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+}
+
+.options-select-option {
+    position: relative;
+}
+
+.options-select-box {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 12px;
+    width: 12px;
+    transform: translateY(-50%);
+    border: 1px solid rgba(50,56,61,1);
+    border-radius: 1px;
+    background-color: rgba(161, 180, 196, 1);
+}
+
+.options-select-box svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    display: none;
+    fill: rgba(50,56,61,1);
+}
+
+.options-select-option[status='1'] svg {
+    display: block;
+}
+
+.options-select-text {
+    color: rgba(161, 180, 196, 1);
+    font-size: 13.3333px;
+    margin-left: 14px;
+}
+
+.options-send {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 65px;
+    border-bottom-right-radius: 5px;
+}
+
+.options-send:hover {
+    background: rgba(50,56,61,1);
+}
+
+.options-send svg {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    height: 37px;
+    transform: translateY(-50%) translateX(50%);
+    fill: rgba(161,180,196,1);
+}
+
+@keyframes loadingRipple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    100% {
+        width: 80px;
+        height: 80px;
+        opacity: 0;
+    }
+}
+
+.loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    display: none;
+}
+
+.loading.inprogress {
+    display: block;
+}
+
+.loading.inprogress .inside{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    height: 130px;
+    width: 175px;
+    background-color: rgba(32, 37, 41, 1);
+    border-radius: 5px;
+    color: rgba(161,180,196,1);
+    text-align: center;
+    filter: drop-shadow(0px 0px 20px rgba(50,56,61,1));
+}
+
+.ripple {
+    position: relative;
+    width: 100%;
+    height: 100px;
+}
+
+.ripple div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    opacity: 1;
+    border: 4px solid rgba(161,180,196,1);
+    border-radius: 50%;
+    animation: loadingRipple 2.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.ripple div:last-child {
+    animation-delay: -1.25s;
+}
+
+/* Reusable Logo Styles */
+
+#startup-logo-tie, #help-logo-tie {
+    fill: rgba(230,0,0,1);
+}
+
+#startup-logo-flap-left, #startup-logo-flap-right, #startup-logo-bottom, #help-logo-flap-left, #help-logo-flap-right, #help-logo-bottom {
+    fill: rgba(76,85,92,1);
+}
+
+#startup-logo-tag, #help-logo-tag {
+    fill: rgba(32, 37, 41, 1);
+}
+
+/* Startup Pane Styles */
+
+#startup-logo {
+    display: block;
+    max-width: 225px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 5px;
+}
+
+#startup-title {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    font-family: 'Raleway';
+    letter-spacing: 8px;
+    font-size: 1.25em;
+}
+
+#startup-subtitle {
+    width: 100%;
+    margin: 0;
+    text-align:center;
+}
+
+#startupInfo-wrapper {
+    position: relative;
+    width:100%;
+    height: calc(100vh - 228px);
+    margin-top: 5px;
+}
+
+#startupInfo-container {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
+}
+
+.paneInfo {
+    position: relative ;
+    max-width: 400px;
+    height: 65px;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+}
+
+.paneInfo > svg {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    height: 40px;
+    transform: translateY(-50%);
+    fill: rgba(76,85,92,1);
+    cursor: pointer;
+}
+
+.paneInfo > svg path {
+    cursor: pointer;
+}
+
+.paneInfo > .paneInfo-text {
+    position: absolute;
+    top: 50%;
+    left: 85px;
+    width: calc(100% - 85px);
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+/* mailAlerts Styles */
+#missionaryTable {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#missionaryTable div {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.missionaryEntry {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.missionaryEntry:first-of-type {
+    margin-top: 0;
+}
+
+.missionaryEntry-name {
+    width: 165px !important;
+    vertical-align: top;
+}
+
+.missionaryEntry-name-selectBox {
+    height: 25px !important;
+    padding: 2px;
+    background-color: rgba(32, 37, 41, 1) !important;
+    border: 2px solid rgba(32, 37, 41, 1) !important;
+    border-radius: 2px !important;
+    transition: border 300ms ease-in-out;
+}
+
+.missionaryEntry-name-selectBox > .select2-selection__rendered {
+    position: relative;
+    top: -6px;
+    left: -6px;
+    color: rgba(161, 180, 196, 1) !important;
+    font-family: 'Raleway';
+    font-size: 13.3333px;
+}
+
+.select2-container--open .missionaryEntry-name-selectBox {
+    border-radius: 2px 2px 0 0 !important;
+}
+
+.missionaryEntry-name-selectBox > .select2-selection__arrow {
+    top: 0 !important;
+}
+
+.missionaryEntry-name-selectBox > .select2-selection__arrow > b {
+    border-color: rgba(161, 180, 196, 1) transparent !important;
+}
+
+.missionaryEntry-name-dropdown {
+    background-color: rgba(32, 37, 41, 1);
+    border: 0;
+    font-size: 13.3333px;
+    color: rgba(161, 180, 196, 1);
+}
+
+.missionaryEntry-name-dropdown .select2-results__option {
+    padding: 5px 6px;
+}
+
+.missionaryEntry-name-dropdown .select2-results__option[aria-selected=true] {
+    background-color: rgba(50,56,61,1);
+    color: rgba(161, 180, 196, 1);
+}
+
+.missionaryEntry-name-dropdown .select2-results__option--highlighted {
+    background-color: rgba(161, 180, 196, 1) !important;
+    color: rgba(32, 37, 41, 1) !important;
+}
+
+.missionaryEntry-packages {
+    width: calc(100% - 229px);
+}
+
+.missionaryEntry-package {
+    position: relative;
+    width: 100%;
+    margin-top: 4px;
+    height: 25px;
+}
+
+.missionaryEntry-package:first-of-type {
+    margin-top: 0;
+}
+
+.missionaryEntry-package-type {
+    width: calc(100% - 59px) !important;
+    vertical-align: top;
+    margin-left: 29px;
+}
+
+.missionaryEntry-package-type-selectBox {
+    height: 25px !important;
+    padding: 2px;
+    background-color: rgba(32, 37, 41, 1) !important;
+    border: 2px solid rgba(32, 37, 41, 1) !important;
+    border-radius: 2px !important;
+    transition: border 300ms ease-in-out;
+}
+
+.missionaryEntry-package-type-selectBox > .select2-selection__rendered {
+    position: relative;
+    top: -6px;
+    left: -6px;
+    color: rgba(161, 180, 196, 1) !important;
+    font-family: 'Raleway';
+    font-size: 13.3333px;
+}
+
+.select2-container--open .missionaryEntry-package-type-selectBox {
+    border-radius: 2px 2px 0 0 !important;
+}
+
+.missionaryEntry-package-type-selectBox > .select2-selection__arrow {
+    top: 0 !important;
+}
+
+.missionaryEntry-package-type-selectBox > .select2-selection__arrow > b {
+    border-color: rgba(161, 180, 196, 1) transparent !important;
+}
+
+.missionaryEntry-package-type-dropdown {
+    background-color: rgba(32, 37, 41, 1);
+    border: 0;
+    font-size: 13.3333px;
+    color: rgba(161, 180, 196, 1);
+}
+
+.missionaryEntry-package-type-dropdown .select2-results__option {
+    padding: 5px 6px;
+}
+
+.missionaryEntry-package-type-dropdown .select2-results__option[aria-selected=true] {
+    background-color: rgba(50,56,61,1);
+    color: rgba(161, 180, 196, 1);
+}
+
+.missionaryEntry-package-type-dropdown .select2-results__option--highlighted {
+    background-color: rgba(161, 180, 196, 1) !important;
+    color: rgba(32, 37, 41, 1) !important;
+}
+
+.missionaryEntry-package-quantity {
+    text-align: center;
+    width: 25px;
+    vertical-align: top;
+}
+
+.missionaryEntry-package-quantity::-webkit-outer-spin-button,
+.missionaryEntry-package-quantity::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.missionaryEntry-package-remove, .missionaryEntry-remove {
+    height: 25px;
+    background-color: rgba(32, 37, 41, 1);
+    border-radius: 2px;
+}
+
+.missionaryEntry-remove {
+    position: relative;
+    width: 25px;
+}
+
+.missionaryEntry-package-remove {
+    position: absolute;
+    top: 0;
+    left: -29px;
+    width: 54px;
+}
+
+.missionaryEntry-package:last-of-type .missionaryEntry-package-remove {
+    left: 0;
+    width: 25px;
+}
+
+.missionaryEntry-package-remove svg, .missionaryEntry-remove svg {
+    position: absolute;
+    height: 25px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    fill: rgba(161,180,196,1);
+}
+
+.missionaryEntry-package-remove:hover, .missionaryEntry-remove:hover {
+    background-color: rgba(50, 56, 61, 1);
+}
+
+.missionaryEntry-addPackage {
+    position: relative;
+    width: 25px;
+    height: 25px;
+    vertical-align: bottom !important;
+    background-color: rgba(32, 37, 41, 1);
+    border-radius: 2px; 
+}
+
+.missionaryEntry-addPackage > svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    fill: rgba(161,180,196, 1);
+}
+
+.missionaryEntry-addPackage:hover {
+    background-color: rgba(50,56,61,1);
+}
+
+.options-addMissionary {
+    position: absolute;
+    top: 0;
+    right: 65px;
+    height: 100%;
+    width: 65px;
+}
+
+.options-addMissionary:hover {
+    background: rgba(50,56,61,1);
+}
+
+.options-addMissionary svg {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    height: 37px;
+    transform: translateY(-50%) translateX(50%);
+    fill: rgba(161,180,196,1);
+}
+
+@media screen and (min-width:650px) {
+    .missionaryEntry-name {
+        width: 200px !important;
+    }
+
+    .missionaryEntry-packages {
+        width: calc(100% - 265px);
+    }
+}
+
+/* requestHelp Styles */
+#help-logo {
+    display: block;
+    max-width: 175px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 5px;
+}
+
+#help-title {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    font-family: 'Raleway';
+    letter-spacing: 6px;
+    font-size: 1.15em;
+}
+
+#help-subtitle {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+#changelogs {
+    text-align: center;
+}
+
+#changelogs div {
+    margin-bottom: 15px;
+}
+
+#changelogs div:last-child {
+    margin-bottom: 0;
+}
+
+#changelogs .title {
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+#changelogs ul {
+    margin-top: 5px;
+    margin-bottom: 0;
+    list-style: none;
+    padding-left: 0;
+}
+
+#changelogs li {
+    margin-bottom: 3px;
+}
+
+#requestHelp .options textarea {
+    height: 100%;
+    width: calc(100% - 65px);
+    resize: none;
+}

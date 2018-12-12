@@ -1,28 +1,20 @@
 const electron = require('electron');
 const {google} = require('googleapis');
+const {promisify} = require('util');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 
 // Configuration Values
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+const SCOPES = ['profile', 'email', 'https://www.googleapis.com/auth/spreadsheets', 'https://mail.google.com/'];
 const CREDENTIALS_FOLDER = '../google';
 
 // Authorize Google & Call Specified Function with Authorized Client
-exports.auth = (callback, final = null) => {
+exports.auth = (onAuthorized) => {
   fs.readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'credentials.json'), (err, content) => {
     if (err) return console.log('ERROR loading client secret file:', err);
 
-    const {client_id, client_secret} = JSON.parse(content).installed;
-    const client = new google.auth.OAuth2(client_id, client_secret, 'http://localhost:2403/auth');
-
-    client.on('tokens', (tokens) => { // Bind access token save to token update event
-      if (tokens.refresh_token) {
-        fs.writeFile(path.join(__dirname, CREDENTIALS_FOLDER, 'token.txt'), tokens.refresh_token, (err) => {
-          if (err) console.error(err);
-        });
-      }
-    });
+    const client = exports.createOAuthClient(content);
 
     // Check for previous token
     fs.readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'token.txt'), "utf8", (err, token) => {
@@ -36,11 +28,15 @@ exports.auth = (callback, final = null) => {
           client.getToken(code, (err, tokens) => { // generate tokens
             if (err) return console.log('Error retrieving tokens', err);
 
-            client.setCredentials(tokens); // set tokens
+            client.setCredentials({refresh_token: tokens.refresh_token}); // set refresh token
+            
             res.send('Authentication Successful!  Closing Window...');
             authWindow.destroy();
             listener.close(); // close listener
-            runCallbackFunctions(callback, final, client); // call specified function(s)
+
+            electron.app.relaunch();
+            electron.app.exit(0);
+            //onAuthorized(client); // Pass Client to authorized function
           });
         });
         const listener = callback_server.listen(2403); // Listen for redirect query
@@ -50,13 +46,28 @@ exports.auth = (callback, final = null) => {
         authWindow.loadURL(auth_URL);
       } else { // refresh token previously saved
         client.setCredentials({refresh_token: token}); // set refresh token
-        runCallbackFunctions(callback, final, client); // call specified function(S)
+        onAuthorized(client);
       }
     });
   });
 }
 
-async function runCallbackFunctions(callbackFunctions, final, authClient) {
+exports.createOAuthClient = (credentials) => {
+  const {client_id, client_secret} = JSON.parse(credentials).installed;
+  const client = new google.auth.OAuth2(client_id, client_secret, 'http://localhost:2403/auth');
+
+  client.on('tokens', (tokens) => { // Bind access token save to token update event
+    if (tokens.refresh_token) {
+      fs.writeFile(path.join(__dirname, CREDENTIALS_FOLDER, 'token.txt'), tokens.refresh_token, (err) => {
+        if (err) console.error(err);
+      });
+    }
+  });
+
+  return client;
+}
+
+exports.asyncCallback = async (callbackFunctions, authClient, final = null) => {
   if (typeof callbackFunctions == 'function') {
     await callbackFunctions(authClient) // Run single callback Function
   } else if (typeof callbackFunctions == 'object') {
@@ -70,4 +81,10 @@ async function runCallbackFunctions(callbackFunctions, final, authClient) {
   } else throw TypeError("Callback is not a Function or Array of Functions");
 
   if (final) { final(); }
+}
+
+exports.secrets = async () => {
+  const readFile = promisify(fs.readFile);
+  var secrets = await readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'credentials.json'), {encoding: 'utf8'});
+  return JSON.parse(secrets).installed;
 }

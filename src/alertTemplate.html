@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            width: 100%;
+            overflow: hidden;
+            background-color:rgba(32, 37, 41, 1);
+        }
+
+        .header img {
+            max-height: 75px; 
+            width: auto; 
+            max-width: 100%; 
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .content {
+            background-color: rgba(209,218,226,1); 
+            margin-top: 2px; 
+            min-height: 100px; 
+            padding: 10px;
+        }
+
+        .content > .title {
+            text-align: center;
+            margin-top: 0;
+            font-size: 1.25em;
+            font-weight: bold;
+            color: rgba(32, 37, 41, 1);
+        }
+
+        .missionary {
+            width: max-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            color: rgba(32, 37, 41, 1);
+        }
+
+        .missionary > .title {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .packageList div {
+            text-decoration: none !important;
+        }
+        </style>
+    </head>
+    <body>
+        <div class='header'>
+            <img src='cid:header-logo' alt="logo" />
+        </div>
+
+        <div class='content'>
+            <p class='title'>Mail in Mission Office:</p>
+            <div class='missionaryList'>
+                <<<MAIL_INFO>>>
+            </div>
+        </div>
+    </body>
+</html>

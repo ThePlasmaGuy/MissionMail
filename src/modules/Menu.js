@@ -103,6 +103,15 @@ module.exports = electron.Menu.buildFromTemplate([
       },
       {
         role: "front"
+      },
+      {
+        role: "separator"
+      }, 
+      {
+        label: "reload",
+        click() {
+          electron.getCurrentWindow().reload();
+        }
       }
     ]
   },

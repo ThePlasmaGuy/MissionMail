@@ -1,63 +1,247 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
+        <meta charset='utf-8'>
         <title>MissionMail</title>
 
         <!-- Stylesheets -->
-        <link rel="stylesheet" href="assets/css/fonts.css" type="text/css">
-        <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="assets/css/tooltips.css" type="text/css">
-        <link rel="stylesheet" href="assets/css/main.css" type="text/css">
-        <link rel="stylesheet" href="assets/css/menubar.css" type="text/css">
-        <link rel="stylesheet" href="assets/css/panels.css" type="text/css">
+        <link rel='stylesheet' href='assets/css/fonts.css' type='text/css'> <!--Font Setup-->
+        <link rel='stylesheet' href='assets/css/tooltips.css' type='text/css'> <!--Tooltip Descriptions-->
+	    <link rel='stylesheet' href='assets/css/select2.min.css' type='text/css'> <!-- Select Box Upgrade & Autocomplete -->
+	    <link rel='stylesheet' href='assets/css/ui.css' type='text/css'> <!--Basic UI-->
     
-        <!-- Electron Fixes (Overwrite Node Defaults) -->
+        <!-- Electron Javascript Setup -->
         <script>
-            window.node_require = require;
+            // Setup Default Electron Variables
+            const {remote} = require('electron');
 
-            var electron = require('electron');
-            var remote = electron.remote;
-            var settings = remote.getGlobal('settings');
-            var current_window = electron.remote.getCurrentWindow();
+            // Remap JQuery Conflicts 
+            window.nodeRequire = require;
+            window.nodeExports = window.exports;
+            window.nodeModule = window.module;
 
+            // Delete JQuery Conflicts
             delete window.require;
             delete window.exports;
             delete window.module;
         </script>
     </head>
     <body>
-        <!-- App Menu Items -->
-        <div id="menu-bar"></div>
-        <div id="menu-buttons">
-            <div id="menu-close" class="tooltipped tooltipped-sw" aria-label="Close Window"><i class="fa fa-times"></i></div>
-            <div id="menu-minimize" class="tooltipped tooltipped-sw" aria-label="Minimize Window"><i class="fa fa-window-minimize"></i></div>
-            <div id="menu-reload" class="tooltipped tooltipped-sw" aria-label="Reload Application"><i class="fa fa-refresh"></i></div>
-            <div id="menu-settings" class="tooltipped tooltipped-sw" aria-label="Check Under the Hood"><i class="fa fa-cog"></i></div>
-            <div id="menu-title" class='p-switch' target='startup'>MissionMail</div>
+        <div id='menubar'>
+            <div id='window-close' class='menubar-button tooltipped tooltipped-sw' aria-label='Close Window'>
+                <svg version='1.1' viewBox='0 0 24 24'>
+                    <path d='M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z' />
+                </svg>
+            </div>
+            <div id='window-sizeState' class='menubar-button tooltipped tooltipped-sw' aria-label='Maximize Window'>
+                <svg version='1.1' viewBox='0 0 24 24'>
+                    <path d='M3,3H21V21H3V3M5,5V19H19V5H5Z'/>
+                </svg>
+            </div>
+            <div id='window-minimize' class='menubar-button tooltipped tooltipped-sw' aria-label='Minimize Window'>
+                <svg version='1.1' viewBox='0 0 24 24'>
+                    <path d='M19,13H5V11H19V13Z'/>
+                </svg>
+            </div>
         </div>
 
-        <div id="container">
-            <div id='startup' class='active'>
-                <div id='selection'>
-                    <div class='select-button p-switch' target='mail-notify'>Mail Notifications</div>
-                    <div class='select-button p-switch' target='send-mail'>Send Group Mail</div>
+        <div id='sidebar'>
+            <div id='branding'>
+                <div id='branding-logo'>
+                    <svg version='1.1' viewBox='0 0 500 278'>
+                        <g id='g1339'>
+                            <rect id='branding-logo-tag' x='337.02' y='94.9' width='119.01' height='58.05'/>
+                            <path id='branding-logo-flap-left' d='M0,0l125,90.33l78.12,56.45l17.54-113.17L208,7.47L204.39,0L0,0z'/>
+                            <path id='branding-logo-tie' d='M223.44,0l14.98,30.96l-19.7,127.11L250,180.67l31.27-22.6l-19.7-127.1L276.57,0h-19.78H250L223.44,0z'/>
+                            <path id='branding-logo-flap-right' d='M295.62,0l-16.27,33.63l17.53,113.16l22.32-16.13V94.9V77.08h74.15L500,0L295.62,0z'/>
+                            <path id='branding-logo-bottom' d='M0,22.91v255.53h500V22.91l-75.93,54.16h49.78v93.69H319.2v-18.88L250,201.25L107.81,99.82L0,22.91z'/>
+                        </g>
+                    </svg>
+                </div>
+                <div id='branding-text'>Mission Mail</div>
+            </div>
+            <div id='navigation'>
+                <div class='navigation-button' id='mailAlertsButton' target='mailAlerts'>
+                    <div class='nav-icon'>
+                        <svg version='1.1' viewBox='0 0 500 350'> 
+					        <path d='M406.55,44.08l-250.15,69.6v63.95l-63.36-17.65V96.03l250.15-69.6L250,0.47L0,70.11v210.26L250,350l250-69.63V70.11L406.55,44.08z M384.62,200.4L263.96,234l-1-82.11l120.65-33.61L384.62,200.4z M484.47,267.88l-23.11,6.44v-21.09l23.11-6.44V267.88z'/>
+                        </svg>
+                    </div>
+                    <div class='nav-text'>Mail<br/>Alerts</div>
+                </div>
+                <div class='navigation-button' id='sendMailButton' target='sendMail'>
+                    <div class='nav-icon'>
+                        <svg version='1.1' viewBox='0 0 500 350'>
+                            <path d='M0,94.47V350h500V94.47l-107.81,76.91L250,272.81L107.81,171.38L0,94.47z'/>
+                            <path d='M243.56-0.26v41.73H125.23v60.18h118.33v41.73l62.54-35.91l62.54-35.91L306.1,35.65L243.56-0.26z'/>
+                            <path d='M0,71.56l125,89.17l125,89.17l125-89.17l125-89.17h-93.99l-90.64,52.04l-90.41,51.91v-55.26H106.63V71.56H0z'/>
+                        </svg>
+                    </div>
+                    <div class='nav-text'>Send<br/>Mail</div>
                 </div>
             </div>
-            <div id='mail-notify'>
-                <div class='title-status'>&gt; Mail Notifications</div>
+            <div id='help'>
+                <div id='help-request' class='options-button navigation-button tooltipped tooltipped-ne' aria-label='Info / Request Help'>
+                    <svg id='hollow' version='1.1' viewBox='0 0 24 24'>
+                        <path d='M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z' />
+                    </svg>
+                    <svg id='filled' version='1.1' viewBox='0 0 24 24'>
+                        <path d="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+                    </svg>
+                </div>
+                <div id='help-reload' class='options-button tooltipped tooltipped-ne' aria-label='Reload Application'>
+                    <svg version='1.1' viewBox='0 0 24 24'>
+                        <path d='M19,12H22.32L17.37,16.95L12.42,12H16.97C17,10.46 16.42,8.93 15.24,7.75C12.9,5.41 9.1,5.41 6.76,7.75C4.42,10.09 4.42,13.9 6.76,16.24C8.6,18.08 11.36,18.47 13.58,17.41L15.05,18.88C12,20.69 8,20.29 5.34,17.65C2.22,14.53 2.23,9.47 5.35,6.35C8.5,3.22 13.53,3.21 16.66,6.34C18.22,7.9 19,9.95 19,12Z' />
+                    </svg>
+                </div>
+                <div id='help-dev' class='options-button tooltipped tooltipped-ne' aria-label='Peek Inside'>
+                    <svg version='1.1' viewBox='0 0 24 24'>
+                        <path d='M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z' />
+                    </svg>
+                </div>
             </div>
-            <div id='send-mail'>
-                <div class='title-status'>&gt; Send Group Mail</div>
-                <input class='missionary-names'/>
+        </div>
+
+        <div id='content' default='startup'>
+            <div id='startup' class='contentPane active'>
+                <div class='body'>
+                    <svg id='startup-logo' version='1.1' viewBox='0 0 500 278'>
+                        <g id='startup-logo-envelope'>
+                            <rect id='startup-logo-tag' x='337.02' y='94.9' width='119.01' height='58.05'/>
+                            <path id='startup-logo-flap-left' d='M0,0l125,90.33l78.12,56.45l17.54-113.17L208,7.47L204.39,0L0,0z'/>
+                            <path id='startup-logo-tie' d='M223.44,0l14.98,30.96l-19.7,127.11L250,180.67l31.27-22.6l-19.7-127.1L276.57,0h-19.78H250L223.44,0z'/>
+                            <path id='startup-logo-flap-right' d='M295.62,0l-16.27,33.63l17.53,113.16l22.32-16.13V94.9V77.08h74.15L500,0L295.62,0z'/>
+                            <path id='startup-logo-bottom' d='M0,22.91v255.53h500V22.91l-75.93,54.16h49.78v93.69H319.2v-18.88L250,201.25L107.81,99.82L0,22.91z'/>
+                        </g>
+                    </svg>
+                    <p id='startup-title'>Mission Mail</p>
+                    <p id='startup-subtitle'>Your Missionary Mail Tool</p>
+                    <div id='startupInfo-wrapper'>
+                        <div id='startupInfo-container'>
+                            <div id='mailAlertsInfo' class='paneInfo'>
+                                <svg version='1.1' viewBox='0 0 500 350'> 
+                                    <path d='M406.55,44.08l-250.15,69.6v63.95l-63.36-17.65V96.03l250.15-69.6L250,0.47L0,70.11v210.26L250,350l250-69.63V70.11L406.55,44.08z M384.62,200.4L263.96,234l-1-82.11l120.65-33.61L384.62,200.4z M484.47,267.88l-23.11,6.44v-21.09l23.11-6.44V267.88z'/>
+                                </svg>
+                                <div class='paneInfo-text'>Send Package, Letter, and Materials Alerts to Missionaries.</div>
+                            </div>
+                            <div id='sendMailInfo' class='paneInfo'>
+                                <svg version='1.1' viewBox='0 0 500 350'>
+                                    <path d='M0,94.47V350h500V94.47l-107.81,76.91L250,272.81L107.81,171.38L0,94.47z'/>
+                                    <path d='M243.56-0.26v41.73H125.23v60.18h118.33v41.73l62.54-35.91l62.54-35.91L306.1,35.65L243.56-0.26z'/>
+                                    <path d='M0,71.56l125,89.17l125,89.17l125-89.17l125-89.17h-93.99l-90.64,52.04l-90.41,51.91v-55.26H106.63V71.56H0z'/>
+                                </svg>
+                                <div class='paneInfo-text'>Send Emails to Missionaries and Area Phones.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id='mailAlerts' class='contentPane optionsEnabled confirmDeletion' resetScript='resetMailAlerts'>
+                <div class='body'>
+                    <div class='pane-title'>Missionaries with Mail</div>
+                    <div id='missionaryTable'>
+                    </div>
+                </div>
+                <div class='options'>
+                    <div class='options-select'>
+                        <div id='alerts-phones' class='options-select-option' status='1'>
+                            <div class='options-select-box'>
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                                </svg>
+                            </div>
+                            <div class='options-select-text'>Message Area Phones</div>
+                        </div>
+                        <div id='alerts-personal' class='options-select-option' status='1'>
+                            <div class='options-select-box'>
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                                </svg>
+                            </div>
+                            <div class='options-select-text'>Message Personal Accounts</div>
+                        </div>
+                        <div id='alerts-zoneLeaders' class='options-select-option' status='1'>
+                            <div class='options-select-box'>
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                                </svg>
+                            </div>
+                            <div class='options-select-text'>Message Zone Leaders</div>
+                        </div>
+                    </div>
+                    <div class='options-addMissionary'><svg viewBox="0 0 24 24"><path d="M15,14C12.33,14 7,15.33 7,18V20H23V18C23,15.33 17.67,14 15,14M6,10V7H4V10H1V12H4V15H6V12H9V10M15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12Z" /></svg></div>
+                    <div class='options-send'><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+                </div>
+                <div class='loading'>
+                    <div class='inside'>
+                        <div class="ripple"><div></div><div></div></div>
+                        <div class='text'>Sending Mail</div>
+                    </div>
+                </div>
+            </div>
+            <div id='sendMail' class='contentPane optionsEnabled confirmDeletion'> <!--class: edited, resetScript: functionName-->
+                <div class='body'>In Development!</div>
+                <div class='options'>
+                    <div class='options-send'><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+                </div>
+            </div>
+            <div id='requestHelp' class='contentPane optionsEnabled confirmDeletion'>
+                <div class='body'>
+                    <svg id='help-logo' version='1.1' viewBox='0 0 500 278'>
+                        <g id='help-logo-envelope'>
+                            <rect id='help-logo-tag' x='337.02' y='94.9' width='119.01' height='58.05'/>
+                            <path id='help-logo-flap-left' d='M0,0l125,90.33l78.12,56.45l17.54-113.17L208,7.47L204.39,0L0,0z'/>
+                            <path id='help-logo-tie' d='M223.44,0l14.98,30.96l-19.7,127.11L250,180.67l31.27-22.6l-19.7-127.1L276.57,0h-19.78H250L223.44,0z'/>
+                            <path id='help-logo-flap-right' d='M295.62,0l-16.27,33.63l17.53,113.16l22.32-16.13V94.9V77.08h74.15L500,0L295.62,0z'/>
+                            <path id='help-logo-bottom' d='M0,22.91v255.53h500V22.91l-75.93,54.16h49.78v93.69H319.2v-18.88L250,201.25L107.81,99.82L0,22.91z'/>
+                        </g>
+                    </svg>
+                    <p id='startup-title'>Mission Mail</p>
+                    <p id='startup-subtitle'>Version 0.0.5</p>
+
+                    <hr/>
+
+                    <div id='changelogs'>
+                        <div version='0.0.5'>
+                            <div class='title'>Version 0.0.5</div>
+                            <ul>
+                                <li>ADD: Better Error Reporting on Startup</li>
+                                <li>FIX: Request Help prevents Window Close during Send</li>
+                            </ul>
+                        </div>
+                        <div version='0.0.4'>
+                            <div class='title'>Version 0.0.4</div>
+                            <ul>
+                                <li>ADD: Application Information shown in Info Pane</li>
+                                <li>ADD: Request Help Functionality (Below)</li>
+                                <li>ADD: Error Logging for Unsent Emails</li>
+                                <li>FIX: Window Close Prevented during Email Send</li>
+                            </ul>
+                        </div>
+                        <div version='0.0.3'>
+                            <div class='title'>Version 0.0.3</div>
+                            <ul>
+                                <li>ADD: Loading Screen When Sending Mail</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class='options'>
+                    <textarea placeholder='Type Help Request Here'></textarea>
+                    <div class='options-send'><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+                </div>
+                <div class='loading'>
+                    <div class='inside'>
+                        <div class="ripple"><div></div><div></div></div>
+                        <div class='text'>Sending Mail</div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Scripts -->
-        <script src="assets/js/jquery.min.js"></script>
-        <script src="assets/js/jquery-ui.min.js"></script>
-        <script src="assets/js/menubar.js"></script>
-        <script src="assets/js/main.js"></script>
-        <script src="assets/js/panels.js"></script>
+        <script src='assets/js/jquery.min.js'></script> <!--JQuery-->
+        <script src='assets/js/select2.full.min.js'></script> <!--Select2-->
+        <script src='assets/js/ui.js'></script> <!--Basic UI Scripts-->
     </body>
 </html>
