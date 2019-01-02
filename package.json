@@ -1,7 +1,7 @@
 {
   "name": "missionmail",
   "productName": "MissionMail",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Mail Notification Helper Tool for the SLCW Mission",
   "main": "src/index.js",
   "scripts": {

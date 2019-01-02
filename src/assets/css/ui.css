@@ -617,7 +617,7 @@ input, button, textarea, :focus {
 }
 
 .missionaryEntry-name {
-    width: 165px !important;
+    width: 166px !important;
     vertical-align: top;
 }
 
@@ -688,7 +688,7 @@ input, button, textarea, :focus {
 }
 
 .missionaryEntry-package-type {
-    width: calc(100% - 59px) !important;
+    width: calc(100% - 69px) !important;
     vertical-align: top;
     margin-left: 29px;
 }
@@ -748,12 +748,74 @@ input, button, textarea, :focus {
     text-align: center;
     width: 25px;
     vertical-align: top;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right-width: 0;
+    line-height: 25px;
+}
+
+.missionaryEntry-package-quantity:focus {
+    border-right-width: 0;
 }
 
 .missionaryEntry-package-quantity::-webkit-outer-spin-button,
 .missionaryEntry-package-quantity::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+.missionaryEntry-package-quantity-modifier {
+    position: relative;
+    height: 25px;
+    width: 11px;
+    margin-right: -14px;
+    margin-left: -4px;
+}
+
+.missionaryEntry-package-quantity-modifier div{
+    position: absolute;
+    height: 12.5px;
+    width: 100%;
+    left: 0;
+    background-color: rgba(32, 37, 41, 1);
+    border: solid 2px rgba(32, 37, 41, 1);
+    transition: border-color 300ms ease-in-out;
+}
+
+.missionaryEntry-package-quantity-modifier svg{
+    position: absolute;
+    height: 12.5px;
+    width: 12.5px;
+    left: -3px;
+    fill: rgba(161,180,196,1);
+}
+
+.missionaryEntry-package-quantity:focus + .missionaryEntry-package-quantity-modifier > .increment,
+.missionaryEntry-package-quantity:focus + .missionaryEntry-package-quantity-modifier > .decrement{
+    border-color: rgba(71,230,214,1);
+    
+}
+
+.missionaryEntry-package-quantity-modifier .increment{
+    top: 0;
+    border-top-right-radius: 2px;
+    border-left-width: 0px;
+    border-bottom-width: 0px;
+}
+
+.missionaryEntry-package-quantity-modifier .increment svg{
+    top: -1px;
+}
+
+.missionaryEntry-package-quantity-modifier .decrement{
+    bottom: 0;
+    border-bottom-right-radius: 2px;
+    border-left-width: 0px;
+    border-top-width: 0px;
+}
+
+.missionaryEntry-package-quantity-modifier .decrement svg{
+    bottom: -1px;
 }
 
 .missionaryEntry-package-remove, .missionaryEntry-remove {
@@ -835,7 +897,7 @@ input, button, textarea, :focus {
 
 @media screen and (min-width:650px) {
     .missionaryEntry-name {
-        width: 200px !important;
+        width: 202px !important;
     }
 
     .missionaryEntry-packages {
