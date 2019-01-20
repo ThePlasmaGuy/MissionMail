@@ -535,7 +535,7 @@ input, button, textarea, :focus {
     margin-bottom: 5px;
 }
 
-#startup-title {
+#startup-title, #info-title {
     width: 100%;
     margin: 0;
     text-align: center;
@@ -544,7 +544,7 @@ input, button, textarea, :focus {
     font-size: 1.25em;
 }
 
-#startup-subtitle {
+#startup-subtitle, #info-subtitle {
     width: 100%;
     margin: 0;
     text-align:center;

@@ -4,6 +4,7 @@
  * Settings
  * Base State Variables
  * Basic Functions
+ * Startup Scripts
  * Menu Bar (Window State) Buttons
  * Options Bar Buttons
  * GMail Setup Scripts
@@ -58,6 +59,10 @@ function logErrors(err) {
   });
 }
 
+// Startup Scripts
+$('#requestHelp #info-subtitle').html(`Version ${remote.app.getVersion()}`);
+$('#requestHelp #changelogs > div').children().first().html('Latest Version');
+
 // Menu Bar (Window State Buttons)
 $("#window-close").click(function() {
   if (windowBusy) return
@@ -75,8 +80,7 @@ $("#window-minimize").click(function() {
 
 // Options Bar Buttons
 
-  // Track Keypress
-let keysPressed = {}
+let keysPressed = {} // Track Keypresses
 window.onkeyup = function(e) { keysPressed[e.keyCode] = false; }
 window.onkeydown = function(e) { keysPressed[e.keyCode] = true; }
 
