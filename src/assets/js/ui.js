@@ -16,7 +16,10 @@
  */
 
 // Settings
-let technologySpecialist = 'HarrisEvin' //missionaries index for current Mission Technology Specialist
+const technologySpecialist = 'HarrisEvin' // missionaries array index for current Mission Technology Specialist
+const mailgunDomain = 'mm.slcw.pw'; // Domain registered with Mailgun for sending email
+const credentialsFolder = 'auth'; // Path to Credentials (Ex: Google, Mailgun)
+let phoneSMSGateway = '@tmomail.net'; // SMS Gateway to send text messages through for missionary phones
 
 // Base State Variables
 let mainWindow = remote.getCurrentWindow();
@@ -32,6 +35,11 @@ let companionships = remote.getGlobal('companionships'); // Companionship Data
 let zoneLeaders = remote.getGlobal('zoneLeaders'); // Zone Leader Data
 
 let windowBusy = false; // If True, Block Exit
+
+// Other Libraries
+const path = nodeRequire('path');
+const fs = nodeRequire('fs');
+const mailgun = nodeRequire('mailgun-js');
 
 // Basic Functions
 function preventWindowExit() {
@@ -89,6 +97,7 @@ $("#help-reload").click(function() {
     if (confirm('Clear current data and reload?')) mainWindow.reload();
   } else mainWindow.reload();
 });
+$("#help-reload").contextmenu(function(e) { mainWindow.reload(); e.preventDefault(); });
 
 $("#help-dev").click(function() {
   if (mainWindow.webContents.isDevToolsOpened()) {
@@ -98,13 +107,22 @@ $("#help-dev").click(function() {
   }
 });
 
-// GMail Setup Scripts
+// Mail Setup Scripts
+  // HTTP Api (Mailgun) for Standard Emails
+let mg = null;
+
+fs.readFile(path.join(__dirname, credentialsFolder, 'mailgunToken.txt'), (err, content) => {
+  if (err) return console.log('ERROR loading client secret file:', err);
+
+  mg = mailgun({apiKey: content, domain: mailgunDomain});
+});
+
+  // SMTP (Gmail) for Area Phones
 let secrets = undefined;
 let smtpTransport = undefined;
 let gmailTransport = undefined;
 let testTransport = undefined;
 let testServerEnabled = false;
-let phoneSMSGateway = '@tmomail.net';
 
 const setupMail = async () => {
   secrets = await auth.secrets();
@@ -346,13 +364,15 @@ $('#missionaryTable').on('click', '.missionaryEntry-remove', function() {
 
 $('#mailAlerts .options-select-option').click(function() { $('#mailAlerts').addClass('edited'); });
 
-// Send the Mail!
-$('#mailAlerts .options-send').click(function() {
-  if (sendingMail) return;
+$('#mailAlerts .options-send').click(function() { // Send Mail
+  if (sendingMail) return; // Ignore if already sending mail
 
+  // Gather Options Values
   const areaPhones = ($('#alerts-phones').attr('status') == '1');
   const personalEmails = ($('#alerts-personal').attr('status') == '1');
   const zoneLeaders = ($('#alerts-zoneLeaders').attr('status') == '1');
+
+  // Gather Package Data
   const missionaryEntries = $('#missionaryTable').children();
 
   if (missionaryEntries.length == 1 && missionaryEntries.first().children('.missionaryEntry-name-value').val() == 'null') {
@@ -365,13 +385,13 @@ $('#mailAlerts .options-send').click(function() {
   var exit = false;
   var zonePackages = {};
 
-  missionaryEntries.each(function () {
+  missionaryEntries.each(function () { // Check Data Validity and Compile
     preventWindowExit();
-    $('#mailAlerts .loading').addClass('inprogress');
+    $('#mailAlerts .loading').addClass('inprogress'); // Startup Loading Screen
 
     var missionaryKey = $(this).children('.missionaryEntry-name-value').val();
 
-    var currentMissionary = {
+    var currentMissionary = { // Assemble Missionary Entry from DOM Data
       'data': missionaries[missionaryKey]
     }
     
@@ -394,42 +414,43 @@ $('#mailAlerts .options-send').click(function() {
           var type = $(this).children('.missionaryEntry-package-type-value').val();
           var quantity = $(this).children('.missionaryEntry-package-quantity').val();
 
-          if (type in packages) {
-            packages[type] += quantity;
+          if (type in packages) { // Assemble package information
+            packages[type] += quantity; // Combine Duplicates to account for ID10T Errors
           } else {
             packages[type] = quantity;
           }
         }
       });
 
-      currentMissionary['packages'] = packages;
+      currentMissionary['packages'] = packages; // Add assembled package data to Missionary Entry
 
-      if (!(currentMissionary.data.zone in zonePackages)) {
+      // Store Missionary Entries by Zone for ZL Notification
+      if (!(currentMissionary.data.zone in zonePackages)) { // Create Zone Entry if DNE
         zonePackages[currentMissionary.data.zone] = [];
       }
 
-      if (missionaryKey in zonePackages[currentMissionary.data.zone]) {
+      if (missionaryKey in zonePackages[currentMissionary.data.zone]) { // Easy Duplicate Checking *Maybe Add to pre-checks in the future?*
         alert(`Duplicate Missionaries Listed (${currentMissionary.data.type + ' ' + currentMissionary.data.name.last}) - Please Remove the Duplicate and Try Again`)
         exit = true;
         return;
       }
 
-      zonePackages[currentMissionary.data.zone][missionaryKey] = currentMissionary;
+      zonePackages[currentMissionary.data.zone][missionaryKey] = currentMissionary; // Assign Entry to Zone
     }
   });
 
-  if (exit) {
+  if (exit) { // Return & kill loading screen if neccesary at this point
     allowWindowExit();
     $('#mailAlerts .loading').removeClass('inprogress');
     return;
   }
 
-  if (!haveNames) {
+  if (!haveNames) { // If no actual data, return and kill loading screen
     alert('No missionary entries are assigned to actual missionaries.  Please fill out the form and try again.');
     allowWindowExit();
     $('#mailAlerts .loading').removeClass('inprogress');
     return;
-  } else if (missingNames) {
+  } else if (missingNames) { // Some are missing, prompt to continue or not
     if (!confirm('Some entries are not assigned to a missionary.  Ignore those and send alerts anyways?')) {
       allowWindowExit();
       $('#mailAlerts .loading').removeClass('inprogress');
@@ -437,11 +458,11 @@ $('#mailAlerts .options-send').click(function() {
     }
   }
 
-  emailsSuccessfullySent = 0;
+  emailsSuccessfullySent = 0; // Reset Email Counter to 0 (Loading screen checks)
 
-  if (zoneLeaders) alertZoneLeaders(zonePackages, personalEmails, areaPhones);
-  alertMissionaries(zonePackages, personalEmails, areaPhones);
-  addPackagesToLog(zonePackages);
+  if (zoneLeaders) alertZoneLeaders(zonePackages, personalEmails, areaPhones); // Alert Zone Leaders (if enabled)
+  alertMissionaries(zonePackages, personalEmails, areaPhones); // Alert Missionaries
+  addPackagesToLog(zonePackages); // Log Stuff
 });
 
 function alertZoneLeaders(zonePackages, personalEmails, areaPhones) {
@@ -459,7 +480,7 @@ function alertZoneLeaders(zonePackages, personalEmails, areaPhones) {
     }
 
     var emailContent = mailAlertsTemplate.replace('<<<MAIL_INFO>>>', missionaryList);
-    var emailsToSend = [zoneLeaders[zone].email];
+    var emailsToSend = zoneLeaders[zone].email;
     
     let companionship = Object.values(missionaries).filter((obj) => {
       return Object.values(obj).includes(zoneLeaders[zone].area);
@@ -467,22 +488,15 @@ function alertZoneLeaders(zonePackages, personalEmails, areaPhones) {
 
     if (personalEmails) {      
       for (missionary in companionship) {
-        emailsToSend.push(companionship[missionary].email_personal);
+        emailsToSend += ', ' + companionship[missionary].email_personal;
       }
     }
 
     incrementEmailsToSend();
 
-    var messageData = {
-      to: emailsToSend,
-      companionship: companionship,
-      content: emailContent,
-      type: 'Email',
-      targetString: `the Zone Leaders of ${zone.substring(0, zone.length - 4).replace(/([A-Z])/g, ' $1').trim()}`
-    }
 
-    smtpTransport.sendMail({
-      from: 'Mission Mail <' + remote.getGlobal('authEmail') + '>',
+    var email = {
+      from: `MissionMail <missionmail@${mailgunDomain}>`,
       to: emailsToSend,
       subject: `Mail in Mission Office for ${zone.substring(0, zone.length - 4).replace(/([A-Z])/g, ' $1').trim()} Zone`,
       html: emailContent,
@@ -491,8 +505,18 @@ function alertZoneLeaders(zonePackages, personalEmails, areaPhones) {
           path: __dirname + '/assets/img/header.png',
           cid: 'header-logo'
       }]
-    }, function(err, res) {
-      emailSendCallback(err, res, messageData);
+    };
+    
+    var messageData = {
+      to: emailsToSend,
+      companionship: companionship,
+      content: emailContent,
+      type: 'Email',
+      targetString: `the Zone Leaders of ${zone.substring(0, zone.length - 4).replace(/([A-Z])/g, ' $1').trim()}`
+    }
+
+    mg.messages().send(email, (err, res) => {
+      emailSendCallback(err, res, messageData)
     });
 
     if (areaPhones) {
@@ -518,10 +542,7 @@ function alertZoneLeaders(zonePackages, personalEmails, areaPhones) {
         to: phonesToSend,
         subject: `Mail in Mission Office for ${zone.substring(0, zone.length - 4).replace(/([A-Z])/g, ' $1').trim()} Zone`,
         text: textContent,
-        attachments: [{
-            filename: 'MissionMail.png',
-            path: __dirname + '/assets/img/textLogo.png'
-        }]
+        inline: path.join(__dirname, '/assets/img/header.png')
       }, function(err, res) {
         emailSendCallback(err, res, textData);
       });
@@ -545,7 +566,7 @@ function alertMissionaries(zonePackages, personalEmails, areaPhones) {
 
   for (var area in packageCompanionships) {
     var missionaryList = '';
-    var emailsToSend = [packageCompanionships[area][0].data.email_area];
+    var emailsToSend = packageCompanionships[area][0].data.email_area;
   
     for (var comp in packageCompanionships[area]) {
       var companion = packageCompanionships[area][comp];
@@ -564,7 +585,7 @@ function alertMissionaries(zonePackages, personalEmails, areaPhones) {
 
     if (personalEmails) {
       for (missionary in companionship) {
-        emailsToSend.push(companionship[missionary].email_personal);
+        emailsToSend += ', ' + companionship[missionary].email_personal;
       }
     }
 
@@ -578,6 +599,14 @@ function alertMissionaries(zonePackages, personalEmails, areaPhones) {
 
     incrementEmailsToSend();
 
+    var email = {
+      from: `MissionMail <missionmail@${mailgunDomain}>`,
+      to: emailsToSend,
+      subject: `Mail in Mission Office`,
+      html: emailContent,
+      inline: path.join(__dirname, '/assets/img/header.png')
+    };
+    
     var messageData = {
       to: emailsToSend,
       companionship: companionship,
@@ -586,18 +615,8 @@ function alertMissionaries(zonePackages, personalEmails, areaPhones) {
       targetString: compList
     }
 
-    smtpTransport.sendMail({
-      from: 'Mission Mail <' + remote.getGlobal('authEmail') + '>',
-      to: emailsToSend,
-      subject: `Mail in Mission Office`,
-      html: emailContent,
-      attachments: [{
-          filename: 'header.png',
-          path: __dirname + '/assets/img/header.png',
-          cid: 'header-logo'
-      }]
-    }, function(err, res) {
-      emailSendCallback(err, res, messageData);
+    mg.messages().send(email, (err, res) => {
+      emailSendCallback(err, res, messageData)
     });
 
     if (areaPhones) {
@@ -710,6 +729,28 @@ $('#requestHelp .options-send').click(function() {
   $('#requestHelp .loading').addClass('inprogress');
   preventWindowExit();
 
+  var email = {
+    from: `UT SLC West Mission Office <office@${mailgunDomain}>`,
+    to: `evin.harris.personal@gmail.com, theplasmaguy2403@gmail.com, ${missionaries[technologySpecialist].email_personal}, ${missionaries[technologySpecialist].email_area}`,
+    subject: `Technology Help Request`,
+    text: helpMessage
+  };
+  
+
+  mg.messages().send(email, (err, res) => {
+    if (err) {
+      console.log('Error sending technology help request!');
+      console.log(err);
+      logErrors(err);
+      allowWindowExit();
+    } else {
+      console.log('Help Request Successfully Sent!');
+      console.log(res);
+      $('#requestHelp .loading').removeClass('inprogress');
+      allowWindowExit();
+    }
+  });
+
   const sheets = google.sheets({version:'v4',auth:googleClient});
   sheets.spreadsheets.values.append({
     spreadsheetId: '1AHcZVYH5Bqdk3GctTOuc3HIc8oPl1Dv6KyILg1ErQ50',
@@ -726,28 +767,9 @@ $('#requestHelp .options-send').click(function() {
     }
   });
 
-  smtpTransport.sendMail({
-    from: 'UT SLC West Mission Office <' + remote.getGlobal('authEmail') + '>',
-    to: ['evin.harris.personal@gmail.com', 'theplasmaguy2403@gmail.com', missionaries[technologySpecialist].email_personal, missionaries[technologySpecialist].phone[0].replace(/-/g, '').replace('+1 ', '') + '@tmomail.net'],
-    subject: 'Technology Help Request',
-    text: helpMessage,
-    attachments: [{
-        filename: 'MissionMail.png',
-        path: __dirname + '/assets/img/textLogo.png'
-    }]
-  }, (err, res) => {
-    if (err) {
-      console.log('Error sending technology help request!');
-      console.log(err);
-      logErrors(err);
-      allowWindowExit();
-    } else {
-      console.log('Help Request Successfully Sent!');
-      console.log(res);
-      $('#requestHelp .loading').removeClass('inprogress');
-      allowWindowExit();
-    }
-  });
-
   $('#requestHelp .options textarea').val(''); // Clear Message Box
 });
+
+$('#info-completeHistory').click(function() {
+  $('#requestHelp').toggleClass('showHistory')
+})

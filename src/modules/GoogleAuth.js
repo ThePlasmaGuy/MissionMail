@@ -7,17 +7,17 @@ const express = require('express');
 
 // Configuration Values
 const SCOPES = ['profile', 'email', 'https://www.googleapis.com/auth/spreadsheets', 'https://mail.google.com/'];
-const CREDENTIALS_FOLDER = '../google';
+const CREDENTIALS_FOLDER = '../auth';
 
 // Authorize Google & Call Specified Function with Authorized Client
 exports.auth = (onAuthorized) => {
-  fs.readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'credentials.json'), (err, content) => {
+  fs.readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'googleCredentials.json'), (err, content) => {
     if (err) return console.log('ERROR loading client secret file:', err);
 
     const client = exports.createOAuthClient(content);
 
     // Check for previous token
-    fs.readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'token.txt'), "utf8", (err, token) => {
+    fs.readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'googleToken.txt'), "utf8", (err, token) => {
       if (err) { // Prompt Signin to Retrieve Tokens
         const auth_URL = client.generateAuthUrl({access_type: 'offline', scope: SCOPES});
 
@@ -58,7 +58,7 @@ exports.createOAuthClient = (credentials) => {
 
   client.on('tokens', (tokens) => { // Bind access token save to token update event
     if (tokens.refresh_token) {
-      fs.writeFile(path.join(__dirname, CREDENTIALS_FOLDER, 'token.txt'), tokens.refresh_token, (err) => {
+      fs.writeFile(path.join(__dirname, CREDENTIALS_FOLDER, 'googleToken.txt'), tokens.refresh_token, (err) => {
         if (err) console.error(err);
       });
     }
@@ -85,6 +85,6 @@ exports.asyncCallback = async (callbackFunctions, authClient, final = null) => {
 
 exports.secrets = async () => {
   const readFile = promisify(fs.readFile);
-  var secrets = await readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'credentials.json'), {encoding: 'utf8'});
+  var secrets = await readFile(path.join(__dirname, CREDENTIALS_FOLDER, 'googleCredentials.json'), {encoding: 'utf8'});
   return JSON.parse(secrets).installed;
 }

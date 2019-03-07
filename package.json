@@ -1,7 +1,7 @@
 {
   "name": "missionmail",
   "productName": "MissionMail",
-  "version": "0.0.7a1",
+  "version": "0.0.7",
   "description": "Mail Notification Helper Tool for the SLCW Mission",
   "main": "src/index.js",
   "scripts": {
@@ -62,7 +62,8 @@
     "electron-squirrel-startup": "^1.0.0",
     "express": "^4.16.4",
     "googleapis": "^27",
-    "nodemailer": "^4.7.0"
+    "nodemailer": "^4.7.0",
+    "mailgun-js": "^0.22.0"
   },
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.24.1",

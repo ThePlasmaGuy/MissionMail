@@ -187,13 +187,13 @@
             </div>
             <div id='requestHelp' class='contentPane optionsEnabled confirmDeletion'>
                 <div class='body'>
-                    <svg id='help-logo' version='1.1' viewBox='0 0 500 278'>
-                        <g id='help-logo-envelope'>
-                            <rect id='help-logo-tag' x='337.02' y='94.9' width='119.01' height='58.05'/>
-                            <path id='help-logo-flap-left' d='M0,0l125,90.33l78.12,56.45l17.54-113.17L208,7.47L204.39,0L0,0z'/>
-                            <path id='help-logo-tie' d='M223.44,0l14.98,30.96l-19.7,127.11L250,180.67l31.27-22.6l-19.7-127.1L276.57,0h-19.78H250L223.44,0z'/>
-                            <path id='help-logo-flap-right' d='M295.62,0l-16.27,33.63l17.53,113.16l22.32-16.13V94.9V77.08h74.15L500,0L295.62,0z'/>
-                            <path id='help-logo-bottom' d='M0,22.91v255.53h500V22.91l-75.93,54.16h49.78v93.69H319.2v-18.88L250,201.25L107.81,99.82L0,22.91z'/>
+                    <svg id='info-logo' version='1.1' viewBox='0 0 500 278'>
+                        <g id='info-logo-envelope'>
+                            <rect id='info-logo-tag' x='337.02' y='94.9' width='119.01' height='58.05'/>
+                            <path id='info-logo-flap-left' d='M0,0l125,90.33l78.12,56.45l17.54-113.17L208,7.47L204.39,0L0,0z'/>
+                            <path id='info-logo-tie' d='M223.44,0l14.98,30.96l-19.7,127.11L250,180.67l31.27-22.6l-19.7-127.1L276.57,0h-19.78H250L223.44,0z'/>
+                            <path id='info-logo-flap-right' d='M295.62,0l-16.27,33.63l17.53,113.16l22.32-16.13V94.9V77.08h74.15L500,0L295.62,0z'/>
+                            <path id='info-logo-bottom' d='M0,22.91v255.53h500V22.91l-75.93,54.16h49.78v93.69H319.2v-18.88L250,201.25L107.81,99.82L0,22.91z'/>
                         </g>
                     </svg>
                     <p id='info-title'>Mission Mail</p>
@@ -205,7 +205,9 @@
                         <div version='0.0.7a'>
                             <div class='title'>Version 0.0.7</div>
                             <ul>
-                                <li>ADD: Better Version Tracking</li>
+                                <li>ADD: Right Click Reload to Force (add. to Alt-Click)</li>
+                                <li>ADD: Switched to Mailgun (Std. Emails) to limit fail</li>
+                                <li>FIX: Version Tracking More Descriptive, Less Space</li>
                             </ul>
                         </div>
                         <div version='0.0.6'>
@@ -243,6 +245,8 @@
                             </ul>
                         </div>
                     </div>
+
+                    <p id='info-completeHistory'><span class='show'>Show</span><span class='hide'>Hide</span> Version History</p>
                 </div>
                 <div class='options'>
                     <textarea placeholder='Type Help Request Here'></textarea>
