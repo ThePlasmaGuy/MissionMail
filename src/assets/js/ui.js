@@ -16,7 +16,7 @@
  */
 
 // Settings
-const technologySpecialist = 'HarrisEvin' // missionaries array index for current Mission Technology Specialist
+const technologySpecialist = 'KnightSean' // missionaries array index for current Mission Technology Specialist
 const mailgunDomain = 'mm.slcw.pw'; // Domain registered with Mailgun for sending email
 const credentialsFolder = 'auth'; // Path to Credentials (Ex: Google, Mailgun)
 let phoneSMSGateway = '@tmomail.net'; // SMS Gateway to send text messages through for missionary phones

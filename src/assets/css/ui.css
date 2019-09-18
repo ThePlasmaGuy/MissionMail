@@ -967,6 +967,37 @@ input, button, textarea, :focus {
     margin-bottom: 3px;
 }
 
+#changelogs .cl-add, #changelogs .cl-rem, #changelogs .cl-mod, #changelogs .cl-fix {
+    display: inline-block;
+    padding: 3px 5px;
+    background-color: rgba(32, 37, 41, 1);
+    border-radius: 5px;
+    font-size: 0.8em;
+    font-weight: bold;
+    transform: translateY(-1px);
+}
+
+#changelogs .cl-add {
+    color: rgba(30, 141, 49, 1);
+}
+
+#changelogs .cl-rem {
+    color: rgb(253, 56, 49);
+}
+
+#changelogs .cl-mod {
+    color: rgb(255, 187, 0);
+}
+
+#changelogs .cl-fix {
+    color: rgb(183, 0, 255);
+}
+
+#changelogs .cl-sub {
+    font-size: 0.8em;
+    font-style: italic;
+}
+
 #info-completeHistory {
     text-align: center;
     font-size: 0.8em;
@@ -989,7 +1020,6 @@ input, button, textarea, :focus {
 #requestHelp.showHistory #info-completeHistory .hide {
     display: inline-block;
 }
-
 
 #requestHelp .options textarea {
     height: 100%;
