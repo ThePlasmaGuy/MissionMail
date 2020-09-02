@@ -61,7 +61,7 @@
     "electron-icon-maker": "0.0.4",
     "electron-squirrel-startup": "^1.0.0",
     "express": "^4.16.4",
-    "googleapis": "^27",
+    "googleapis": "^59",
     "nodemailer": "^4.7.0",
     "mailgun-js": "^0.22.0"
   },
